@@ -1,0 +1,104 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:p="/lib/hudson/project">
+  <l:layout title="Releases : ${it.owner.displayName}">
+    <st:include page="sidepanel.jelly" it="${it.owner}" />
+    <l:main-panel>
+      <script>//<![CDATA[
+         function checkCB(chBox)
+         {
+            count = 0
+            first = null
+            f = chBox.form
+            for (i = 0 ; i < f.elements.length ; i++)
+            if (f.elements[i].type == 'checkbox' && f.elements[i].checked)
+            {
+               if (first == null && f.elements[i] != chBox)
+                  first = f.elements[i]
+               count += 1
+            }
+            
+            if (count > 2) 
+            {
+               first.checked = false
+               count -= 1
+            }
+         }
+         //]]>
+      </script>
+      <h1>Releases</h1>
+	  <f:form method="GET" action="compare">
+      <f:submit value="Compare" class="compare-button" />
+      <table class="pane">
+      <thead>
+      <tr>
+      	<td class="pane-header"> </td>
+      	<td class="pane-header" colspan="2">Revision</td>
+      	<td class="pane-header">Author</td>
+      	<td class="pane-header">Date</td>
+      	<td class="pane-header">Message</td>
+      </tr>
+      </thead>
+      <tbody>
+      <j:forEach var="r" items="${it.revisions}">
+      	<tr>
+			<td class="pane"><input type="checkbox" name="compare" value="${r.logEntry.revision}" onClick="checkCB(this)"/></td>
+      		<td class="pane">${r.logEntry.revision}</td>
+	        <td class="pane">
+	        <l:tasks>
+	      		<j:set var="url" value="${h.getNearestAncestorUrl(request,it)}"/>
+	      		<l:task icon="images/32x32/clock.gif" href="${url}/build?revision=${r.logEntry.revision}" title="${%Build Now}"
+	        onclick="${h.ifThenElse(it.parameterized,null,'return build(this)')}" permission="${it.owner.BUILD}">
+	        	</l:task>
+				<script>
+				  function build(a) {
+				    new Ajax.Request(a.href,{method:"post"});
+				    hoverNotification('${%Build scheduled}',a.parentNode);
+				    return false;
+				  }
+				</script>
+			</l:tasks>
+			</td>
+      		<td class="pane">${r.logEntry.author}</td>
+      		<td class="pane">${r.logEntry.date}</td>
+      		<td class="pane">${r.logEntry.message}</td>
+      	</tr>
+		<j:choose>
+		<j:when test="${r.getBuilds().size()>0}">
+      		<j:forEach var="b" items="${r.getBuilds().values()}">
+		<tr class="build-row">
+      		<td>
+				<img width="16" height="16" src="${imagesURL}/16x16/${b.buildStatusUrl}" alt="${b.iconColor.description}" />
+			</td>
+			<td>
+				#${b.getEnvVars().get("BUILD_NUMBER")}
+      		</td>
+      		<td colspan="4">
+      			<a href="${r.getBuildUrl(b)}">${b.getTimestamp().getTime()}</a>
+				<j:set var="badges" value="${b.badgeActions}"/>
+				<j:if test="${!empty(badges)}">
+	        		<st:nbsp/>
+	        		<j:forEach var="badge" items="${badges}">
+	          			<st:include it="${badge}" page="badge.jelly" />
+	        		</j:forEach>
+      			</j:if>
+				<st:nbsp/>
+				    <l:hasPermission permission="${permission}">
+      				<a href="${r.getBuildUrl(b)}editDescription">
+	        			<img src="${imagesURL}/16x16/notepad.gif" alt="Edit Build Description" />
+      				</a>
+    				</l:hasPermission>
+    			<st:nbsp/>
+    			<strong>${b.description}</strong>
+				<br/>
+      		</td>
+      	</tr>
+			</j:forEach>
+        </j:when>
+	    </j:choose>
+      </j:forEach>
+      </tbody>
+      </table>
+      <f:submit value="Compare" class="compare-button" />
+      </f:form>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

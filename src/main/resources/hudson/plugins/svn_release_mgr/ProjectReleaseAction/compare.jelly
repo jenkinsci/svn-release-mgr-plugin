@@ -1,0 +1,54 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:p="/lib/hudson/project">
+  <l:layout title="Compare Revisions : ${it.owner.displayName}">
+    <st:include page="sidepanel.jelly" it="${it.owner}" />
+    <l:main-panel>
+      <h1>Compare Revisions ${it.compare[0]} and ${it.compare[1]}</h1>
+	  <f:form method="POST" action="compare">
+	  
+      <table class="pane">
+      <thead>
+      <tr>
+      	<td class="pane-header">Revision</td>
+      	<td class="pane-header">Builds</td>
+      	<td class="pane-header">Author</td>
+      	<td class="pane-header">Date</td>
+      	<td class="pane-header">Message</td>
+      </tr>
+      </thead>
+      <tbody>
+      <j:forEach var="r" items="${it.compareRevisions}">
+		<tr>
+			<td class="pane">${r.logEntry.revision}</td>
+			<td class="pane">
+			<j:forEach var="b" items="${r.getBuilds().values()}">
+				<a href="${r.getBuildUrl(b)}">${b.getTimestamp().getTime()}</a>
+				<br/>
+			</j:forEach>
+			</td>
+			<td class="pane">${r.logEntry.author}</td>
+			<td class="pane">${r.logEntry.date}</td>
+			<td class="pane">${r.logEntry.message}</td>
+		</tr>
+		<tr>
+			<td class="pane"> </td>
+			<td class="pane" colspan="5">
+			<j:forEach var="pk" items="${r.logEntry.getChangedPaths().keySet()}">
+				<j:set var="ep" value="${r.logEntry.getChangedPaths().get(pk)}" />
+				<strong>${ep.type}</strong> ${ep.path}
+				<j:choose>
+          			<j:when test="${ep.copyPath!=null}">
+			        (from ${ep.copyPath} revision ${ep.copyRevision})
+			        </j:when>
+		        </j:choose>
+				
+				<br/>
+			</j:forEach>
+			</td>
+		</tr>
+      </j:forEach>
+      </tbody>
+      </table>
+      </f:form>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>
