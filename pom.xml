@@ -5,7 +5,18 @@
   <artifactId>svn-release-mgr</artifactId>
   <packaging>hpi</packaging>
   <version>1.0-SNAPSHOT</version>
-  
+  <url>http://wiki.hudson-ci.org/display/HUDSON/Subversion+Release+Manager</url>
+	<developers>
+		<developer>
+			<id>piascikj</id>
+			<name>Jesse Piascik</name>
+			<email>jesse@piascik.net</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>-6</timezone>
+		</developer>
+	</developers>
   <properties>
     <!-- which version of Hudson is this plugin built against? -->
     <hudson.version>1.287</hudson.version>
