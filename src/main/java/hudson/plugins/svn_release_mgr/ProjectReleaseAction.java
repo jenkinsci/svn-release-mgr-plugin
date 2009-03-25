@@ -1,5 +1,6 @@
 package hudson.plugins.svn_release_mgr;
 
+import hudson.Util;
 import hudson.model.AbstractProject;
 import hudson.model.Cause;
 import hudson.model.CauseAction;
@@ -12,6 +13,7 @@ import hudson.model.StringParameterValue;
 import hudson.plugins.svn_release_mgr.model.Revision;
 import hudson.scm.SubversionReleaseSCM;
 import hudson.scm.SubversionReleaseSCM.ModuleLocation;
+import hudson.util.FormFieldValidator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -55,7 +57,16 @@ public class ProjectReleaseAction implements ProminentProjectAction {
 	}
 
 	public Collection<Revision> getRevisions() {
-		return getRevisions(0, -1);
+		Collection revisions = new ArrayList();
+		int i = 1;
+		int maxRevisions = Integer.parseInt(property.maxRevisions);
+		for (Revision r:getRevisions(0, -1)) {
+			revisions.add(r);
+			i++;
+			if (i > maxRevisions) break;
+		}
+		
+		return revisions;
 	}
 	
 	public Collection<Revision> getCompareRevisions() {
@@ -150,7 +161,7 @@ public class ProjectReleaseAction implements ProminentProjectAction {
 		System.out.println("Binding: " + compare[0] + " " + compare[1]);
 		req.getView(this, "compare").forward(req, rsp);
 	}
-
+	
 	public void doBuild(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException {
 		req.bindParameters(this);
         List<ParameterValue> values = new ArrayList<ParameterValue>();

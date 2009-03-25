@@ -22,11 +22,32 @@
                count -= 1
             }
          }
+
+         function validateForm(b)
+         {
+            count = 0
+            first = null
+            f = b.form
+            for (i = 0 ; i < f.elements.length ; i++)
+            if (f.elements[i].type == 'checkbox' && f.elements[i].checked)
+            {
+               if (first == null && f.elements[i] != b)
+                  first = f.elements[i]
+               count += 1
+            }
+            
+            if (count < 2) 
+            {
+            	alert("Select two revisions to compare.");
+            } else {
+            	f.submit();
+            }
+         }
          //]]>
       </script>
       <h1>Releases</h1>
-	  <f:form method="GET" action="compare">
-      <f:submit value="Compare" class="compare-button" />
+	  <f:form name="compareForm" method="GET" action="compare">
+      <input type="button" onClick="validateForm(this)" value="Compare" class="compare-button" />
       <table class="pane">
       <thead>
       <tr>
@@ -97,7 +118,6 @@
       </j:forEach>
       </tbody>
       </table>
-      <f:submit value="Compare" class="compare-button" />
       </f:form>
     </l:main-panel>
   </l:layout>

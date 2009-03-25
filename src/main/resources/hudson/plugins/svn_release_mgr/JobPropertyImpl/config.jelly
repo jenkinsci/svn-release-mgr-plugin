@@ -8,16 +8,18 @@
       optional @help points to the help document HTML. ${rootURL}/plugin/svn-release-mgr
       is mapped to our resources/ directory, so this is a convenient way to serve
       static resources.
-    -->
-    <f:entry title="Show Revisions, Builds, and Releases"
-      description="Check if we should show Revisions, Builds, and Releases"
-      help="${rootURL}/plugin/svn-release-mgr/help-globalConfig.html">
-      <!--
-        we'll have on input field. In HTML, single "namespace" is shared between
-        all form components in one <form>, so we need to choose a name that doesn't
-        collide with other plugins. The 'descriptor' variable represents our descriptor
-        object, so we use that to determine the initial value for this form.
-      -->
-      <f:checkbox name="svn-release-mgr.show" checked="${instance.show()}" />
-    </f:entry>
+	<f:optionalBlock name="dynamic" title="Use existing dynamic view">
+	  <f:entry title="View drive">
+	    <f:textbox name="drive" value="${it.drive}"/>
+	  </f:entry>
+	</f:optionalBlock>
+-->
+
+           <f:optionalBlock name="releases.show"
+            help="${rootURL}/plugin/svn-release-mgr/help-globalConfig.html"
+            title="Use Subversion Release Manager" checked="${instance != null}">
+			  <f:entry title="Max Revisions to show">
+			    <f:textbox field="maxRevisions" name="maxRevisions" value="${it.maxRevisions}"/>
+			  </f:entry>
+          </f:optionalBlock>
 </j:jelly>

@@ -427,7 +427,6 @@ public class SubversionReleaseSCM extends SCM implements Serializable {
             this.locations = parent.getLocations(build);
             //TODO Added by JSP for building specific revision
             this.revision = build.getEnvVars().get("REVISION");
-            System.out.println("In checkout, revision=" + revision);
         }
 
         public List<External> invoke(File ws, VirtualChannel channel) throws IOException {
@@ -437,7 +436,11 @@ public class SubversionReleaseSCM extends SCM implements Serializable {
                 final List<External> externals = new ArrayList<External>(); // store discovered externals to here
                 //TODO Added by JSP for building specific revision
                 SVNRevision revision = SVNRevision.create(timestamp);
-                if (this.revision != null) revision = SVNRevision.create(Long.parseLong(this.revision));
+                try {
+                	if (this.revision != null) revision = SVNRevision.create(Long.parseLong(this.revision));
+                } catch (NumberFormatException e) {
+                	listener.getLogger().println("Unable to parse revision number from value: " + this.revision + ", checking out HEAD revision.");
+                }
                 if(update) {
                     for (final ModuleLocation l : locations) {
                         try {
