@@ -64,11 +64,13 @@
 			<td class="pane"><input type="checkbox" name="compare" value="${r.logEntry.revision}" onClick="checkCB(this)"/></td>
       		<td class="pane">${r.logEntry.revision}</td>
 	        <td class="pane">
-	        <l:tasks>
 	      		<j:set var="url" value="${h.getNearestAncestorUrl(request,it)}"/>
-	      		<l:task icon="images/32x32/clock.gif" href="${url}/build?revision=${r.logEntry.revision}" title="${%Build Now}"
-	        onclick="${h.ifThenElse(it.parameterized,null,'return build(this)')}" permission="${it.owner.BUILD}">
-	        	</l:task>
+	      		<j:set var="job" value="${it.owner}"/>
+		        <j:if test="${job.buildable and job.hasPermission(job.BUILD)}">
+	      		<a href="${url}/build?revision=${r.logEntry.revision}" onclick="${h.ifThenElse(it.parameterized,null,'return build(this)')}">
+                  <img src="${imagesURL}/24X24/clock.gif" title="${%Schedule a build}" alt="${%Schedule a build}" border="0"/>
+               </a>
+               </j:if>
 				<script>
 				  function build(a) {
 				    new Ajax.Request(a.href,{method:"post"});
@@ -76,7 +78,7 @@
 				    return false;
 				  }
 				</script>
-			</l:tasks>
+
 			</td>
       		<td class="pane">${r.logEntry.author}</td>
       		<td class="pane">${r.logEntry.date}</td>
@@ -104,7 +106,7 @@
 				<st:nbsp/>
 				    <l:hasPermission permission="${permission}">
       				<a href="${r.getBuildUrl(b)}editDescription">
-	        			<img src="${imagesURL}/16x16/notepad.gif" alt="Edit Build Description" />
+	        			<img src="${imagesURL}/16x16/notepad.gif" title="Edit Build Description" alt="Edit Build Description" />
       				</a>
     				</l:hasPermission>
     			<st:nbsp/>
