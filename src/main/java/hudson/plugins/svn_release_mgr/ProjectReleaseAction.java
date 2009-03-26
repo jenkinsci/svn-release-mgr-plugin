@@ -42,8 +42,6 @@ public class ProjectReleaseAction implements ProminentProjectAction {
 
 	private AbstractProject<?, ?> owner;
 	private JobPropertyImpl property;
-	private final ISVNAuthenticationProvider authProvider;
-	private final ModuleLocation[] locations;
 	private String[] compare;
 	private String revision;
 
@@ -52,8 +50,14 @@ public class ProjectReleaseAction implements ProminentProjectAction {
 	public ProjectReleaseAction(AbstractProject<?, ?> owner, JobPropertyImpl property) {
 		this.owner = owner;
 		this.property = property;
-		this.authProvider = getSubversion().getDescriptor().createAuthenticationProvider();
-		this.locations = getSubversion().getLocations();
+	}
+
+	private ISVNAuthenticationProvider getAuthProvider() {
+		return getSubversion().getDescriptor().createAuthenticationProvider();
+	}
+
+	private ModuleLocation[] getLocations() {
+		return getSubversion().getLocations();
 	}
 
 	public Collection<Revision> getRevisions() {
@@ -70,14 +74,13 @@ public class ProjectReleaseAction implements ProminentProjectAction {
 	}
 	
 	public Collection<Revision> getCompareRevisions() {
-		System.out.println("Comparing: " + compare[0] + " " + compare[1]);
 		return getRevisions(Long.parseLong(compare[0]), Long.parseLong(compare[1]));
 	}
 
 	public Collection<Revision> getRevisions(long start, long end) {
 		DAVRepositoryFactory.setup();
 		SortedMap<Long, Revision> revisions = new TreeMap<Long, Revision>(Collections.reverseOrder());
-		for (ModuleLocation l : locations) {
+		for (ModuleLocation l : getLocations()) {
 			SVNURL svnUrl;
 			SVNRepository repository;
 			try {
@@ -156,13 +159,12 @@ public class ProjectReleaseAction implements ProminentProjectAction {
 	}
 
 	public SVNClientManager createSvnClientManager() {
-		return getSubversion().createSvnClientManager(authProvider);
+		return getSubversion().createSvnClientManager(getAuthProvider());
 	}
 
 	public void doCompare(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException {
 		//TODO Validator needed for two values
 		setCompare(req.getParameterValues("compare"));
-		System.out.println("Binding: " + compare[0] + " " + compare[1]);
 		req.getView(this, "compare").forward(req, rsp);
 	}
 	
