@@ -4,7 +4,7 @@
   <groupId>org.jvnet.hudson.plugins</groupId>
   <artifactId>svn-release-mgr</artifactId>
   <packaging>hpi</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0-BETA</version>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Subversion+Release+Manager</url>
 	<developers>
 		<developer>
