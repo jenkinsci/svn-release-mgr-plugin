@@ -21,7 +21,7 @@ public class PluginImpl extends Plugin {
 	public void start() throws Exception {
         // plugins normally extend Hudson by providing custom implementations
         // of 'extension points'. In this example, we'll add one builder.
-    	Jobs.PROPERTIES.add(JobPropertyImpl.DESCRIPTOR);
+    	Jobs.PROPERTIES.add(JobPropertyImpl.DescriptorImpl.DESCRIPTOR);
     	SCMS.SCMS.add(SubversionReleaseSCM.DescriptorImpl.DESCRIPTOR);
    }
 }

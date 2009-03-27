@@ -1,5 +1,6 @@
 package hudson.plugins.svn_release_mgr;
 
+import hudson.Util;
 import hudson.model.AbstractProject;
 import hudson.model.Cause;
 import hudson.model.CauseAction;
@@ -12,6 +13,7 @@ import hudson.model.StringParameterValue;
 import hudson.plugins.svn_release_mgr.model.Revision;
 import hudson.scm.SubversionReleaseSCM;
 import hudson.scm.SubversionReleaseSCM.ModuleLocation;
+import hudson.util.FormFieldValidator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,8 +42,6 @@ public class ProjectReleaseAction implements ProminentProjectAction {
 
 	private AbstractProject<?, ?> owner;
 	private JobPropertyImpl property;
-	private final ISVNAuthenticationProvider authProvider;
-	private final ModuleLocation[] locations;
 	private String[] compare;
 	private String revision;
 
@@ -50,23 +50,37 @@ public class ProjectReleaseAction implements ProminentProjectAction {
 	public ProjectReleaseAction(AbstractProject<?, ?> owner, JobPropertyImpl property) {
 		this.owner = owner;
 		this.property = property;
-		this.authProvider = getSubversion().getDescriptor().createAuthenticationProvider();
-		this.locations = getSubversion().getLocations();
+	}
+
+	private ISVNAuthenticationProvider getAuthProvider() {
+		return getSubversion().getDescriptor().createAuthenticationProvider();
+	}
+
+	private ModuleLocation[] getLocations() {
+		return getSubversion().getLocations();
 	}
 
 	public Collection<Revision> getRevisions() {
-		return getRevisions(0, -1);
+		Collection revisions = new ArrayList();
+		int i = 1;
+		int maxRevisions = Integer.parseInt(property.maxRevisions);
+		for (Revision r:getRevisions(0, -1)) {
+			revisions.add(r);
+			i++;
+			if (i > maxRevisions) break;
+		}
+		
+		return revisions;
 	}
 	
 	public Collection<Revision> getCompareRevisions() {
-		System.out.println("Comparing: " + compare[0] + " " + compare[1]);
 		return getRevisions(Long.parseLong(compare[0]), Long.parseLong(compare[1]));
 	}
 
 	public Collection<Revision> getRevisions(long start, long end) {
 		DAVRepositoryFactory.setup();
 		SortedMap<Long, Revision> revisions = new TreeMap<Long, Revision>(Collections.reverseOrder());
-		for (ModuleLocation l : locations) {
+		for (ModuleLocation l : getLocations()) {
 			SVNURL svnUrl;
 			SVNRepository repository;
 			try {
@@ -102,7 +116,11 @@ public class ProjectReleaseAction implements ProminentProjectAction {
 			Long rev = Revision.getRevisionNumber(r);
 			if (rev == null) continue;
 			Revision revision = revisions.get(rev);
-			if (revision != null ) revision.addBuild(r);
+			if (revision != null ) {
+				//Add the link to the build as well - DOES NOT WORK
+				//if (r.getActions(ProjectReleaseAction.class).size() < 1) r.addAction(this);
+				revision.addBuild(r);
+			}
 		}
 		
 		return revisions.values();
@@ -141,16 +159,15 @@ public class ProjectReleaseAction implements ProminentProjectAction {
 	}
 
 	public SVNClientManager createSvnClientManager() {
-		return getSubversion().createSvnClientManager(authProvider);
+		return getSubversion().createSvnClientManager(getAuthProvider());
 	}
 
 	public void doCompare(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException {
 		//TODO Validator needed for two values
 		setCompare(req.getParameterValues("compare"));
-		System.out.println("Binding: " + compare[0] + " " + compare[1]);
 		req.getView(this, "compare").forward(req, rsp);
 	}
-
+	
 	public void doBuild(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException {
 		req.bindParameters(this);
         List<ParameterValue> values = new ArrayList<ParameterValue>();
