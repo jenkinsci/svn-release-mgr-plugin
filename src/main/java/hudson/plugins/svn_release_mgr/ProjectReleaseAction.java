@@ -117,8 +117,8 @@ public class ProjectReleaseAction implements ProminentProjectAction {
 			if (rev == null) continue;
 			Revision revision = revisions.get(rev);
 			if (revision != null ) {
-				//Add the link to the build as well
-				if (r.getActions(ProjectReleaseAction.class).size() < 1) r.addAction(this);
+				//Add the link to the build as well - DOES NOT WORK
+				//if (r.getActions(ProjectReleaseAction.class).size() < 1) r.addAction(this);
 				revision.addBuild(r);
 			}
 		}

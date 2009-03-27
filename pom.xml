@@ -1,15 +1,29 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.jvnet.hudson.plugins</groupId>
 	<artifactId>svn-release-mgr</artifactId>
 	<packaging>hpi</packaging>
-	<version>1.1-SNAPSHOT</version>
+	<version>0.1-SNAPSHOT</version>
 	<name>Subversion Release plugin</name>
-	<description>Plugin lists revisions and related builds allowing a build of a specific revision</description>
+	<description>
+		Plugin lists revisions and related builds allowing a build of a
+		specific revision
+	</description>
 	<url>
 		http://wiki.hudson-ci.org/display/HUDSON/Subversion+Release+Manager
 	</url>
+	<properties>
+		<!-- which version of Hudson is this plugin built against? -->
+		<hudson.version>1.289</hudson.version>
+	</properties>
+	<parent>
+		<groupId>org.jvnet.hudson.plugins</groupId>
+		<artifactId>plugin</artifactId>
+		<version>1.289</version>
+	</parent>
 	<developers>
 		<developer>
 			<id>piascikj</id>
@@ -22,7 +36,15 @@
 		</developer>
 	</developers>
 	<scm>
-		<connection>scm:svn:https://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/svn-release-mgr</connection>
+		<connection>
+			scm:svn:https://guest@svn.dev.java.net/svn/hudson/trunk/hudson/plugins/svn-release-mgr
+		</connection>
+		<developerConnection>
+			scm:svn:https://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/svn-release-mgr
+		</developerConnection>
+		<url>
+			https://hudson.dev.java.net/source/browse/hudson/trunk/hudson/plugins/svn-release-mgr
+		</url>
 	</scm>
 	<distributionManagement>
 		<repository>
@@ -30,12 +52,6 @@
 			<url>java-net:/maven2-repository/trunk/repository/</url>
 		</repository>
 	</distributionManagement>
-
-	<properties>
-		<!-- which version of Hudson is this plugin built against? -->
-		<hudson.version>1.287</hudson.version>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.jvnet.hudson.main</groupId>
