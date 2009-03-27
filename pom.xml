@@ -5,7 +5,7 @@
 	<artifactId>svn-release-mgr</artifactId>
 	<packaging>hpi</packaging>
 	<version>0.2-SNAPSHOT</version>
-	<name>Subversion Release plugin</name>
+	<name>Subversion Release Manager plugin</name>
 	<description>
 		Plugin lists revisions and related builds allowing a build of a
 		specific revision
