@@ -68,7 +68,7 @@
 	      		<j:set var="job" value="${it.owner}"/>
 		        <j:if test="${job.buildable and job.hasPermission(job.BUILD)}">
 	      		<a href="${url}/build?revision=${r.logEntry.revision}" onclick="${h.ifThenElse(it.parameterized,null,'return build(this)')}">
-                  <img src="${imagesURL}/24X24/clock.gif" title="${%Schedule a build}" alt="${%Schedule a build}" border="0"/>
+                  <img src="${imagesURL}/24x24/clock.gif" title="${%Schedule a build}" alt="${%Schedule a build}" border="0"/>
                </a>
                </j:if>
 				<script>
