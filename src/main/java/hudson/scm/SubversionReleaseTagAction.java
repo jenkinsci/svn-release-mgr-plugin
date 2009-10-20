@@ -5,6 +5,7 @@ import hudson.model.Action;
 import hudson.model.TaskListener;
 import hudson.model.TaskThread;
 import hudson.scm.SubversionReleaseSCM.SvnInfo;
+import hudson.scm.subversion.Messages;
 import hudson.util.CopyOnWriteMap;
 import hudson.security.Permission;
 import org.kohsuke.stapler.StaplerRequest;

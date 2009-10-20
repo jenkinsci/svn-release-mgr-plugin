@@ -1,23 +1,21 @@
 package hudson.plugins.svn_release_mgr;
 
+import hudson.Extension;
 import hudson.Util;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import hudson.scm.SubversionReleaseSCM;
-import hudson.util.FormFieldValidator;
+import hudson.util.FormValidation;
 
-import java.io.IOException;
 import java.util.logging.Logger;
-
-import javax.servlet.ServletException;
 
 import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * Promotion processes defined for a project.
@@ -42,17 +40,13 @@ public final class JobPropertyImpl extends JobProperty<AbstractProject<?,?>> {
 	@Override
 	public Action getJobAction(AbstractProject<?, ?> job) {
 		Action action = super.getJobAction(job);
+                // I had to use a copy of SubversionSCM, but could have used
+                // SubversionSCM if we can have 3 lines added to CheckOutTask.
 		if (SubversionReleaseSCM.class.equals( job.getScm().getClass())) {
 			action = new ProjectReleaseAction(job, this);
 		}
 
 		return action;
-	}
-	
-	@Override
-	public JobPropertyDescriptor getDescriptor() {
-		// TODO Auto-generated method stub
-		return DescriptorImpl.DESCRIPTOR;
 	}
 
 
@@ -64,11 +58,10 @@ public final class JobPropertyImpl extends JobProperty<AbstractProject<?,?>> {
      * See <tt>views/hudson/plugins/hello_world/HelloWorldBuilder/*.jelly</tt>
      * for the actual HTML fragment for the configuration screen.
      */
+    @Extension
     public static final class DescriptorImpl extends JobPropertyDescriptor {
-   	
-        public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
-        DescriptorImpl() {
+        public DescriptorImpl() {
             super(JobPropertyImpl.class);
             load();
         }
@@ -87,19 +80,13 @@ public final class JobPropertyImpl extends JobProperty<AbstractProject<?,?>> {
 				return null;
 		}
 
-		public void doCheckMaxRevisions(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-			final String maxRevisions = req.getParameter("value");
-			new FormFieldValidator(req, rsp, false) {
-				@Override
-				protected void check() throws IOException, ServletException {
-					try {
-						Integer.parseInt(Util.nullify(maxRevisions));
-						ok();
-					} catch (NumberFormatException e) {
-						error("Enter an integer value only.");
-					}
-				}
-			}.process();
+		public FormValidation doCheckMaxRevisions(@QueryParameter String value) {
+			try {
+				Integer.parseInt(Util.nullify(value));
+				return FormValidation.ok();
+			} catch (NumberFormatException e) {
+				return FormValidation.error("Enter an integer value only.");
+			}
 		}
 
     }

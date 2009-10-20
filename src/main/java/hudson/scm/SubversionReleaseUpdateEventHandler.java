@@ -1,6 +1,7 @@
 package hudson.scm;
 
 import hudson.remoting.Which;
+import hudson.scm.subversion.Messages;
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.internal.wc.SVNExternal;
 import org.tmatesoft.svn.core.wc.SVNEvent;

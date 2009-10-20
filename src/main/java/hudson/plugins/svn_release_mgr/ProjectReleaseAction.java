@@ -1,6 +1,5 @@
 package hudson.plugins.svn_release_mgr;
 
-import hudson.Util;
 import hudson.model.AbstractProject;
 import hudson.model.Cause;
 import hudson.model.CauseAction;
@@ -13,7 +12,6 @@ import hudson.model.StringParameterValue;
 import hudson.plugins.svn_release_mgr.model.Revision;
 import hudson.scm.SubversionReleaseSCM;
 import hudson.scm.SubversionReleaseSCM.ModuleLocation;
-import hudson.util.FormFieldValidator;
 
 import java.io.IOException;
 import java.util.ArrayList;

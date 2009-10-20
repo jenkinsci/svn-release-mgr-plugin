@@ -3,6 +3,7 @@ package hudson.scm;
 import com.thoughtworks.xstream.XStream;
 import com.trilead.ssh2.DebugLogger;
 import com.trilead.ssh2.SCPClient;
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.FilePath.FileCallable;
 import hudson.Launcher;
@@ -19,6 +20,7 @@ import hudson.model.TaskListener;
 import hudson.remoting.Callable;
 import hudson.remoting.Channel;
 import hudson.remoting.VirtualChannel;
+import hudson.scm.subversion.Messages;
 import hudson.triggers.SCMTrigger;
 import hudson.util.EditDistance;
 import hudson.util.FormFieldValidator;
@@ -897,6 +899,7 @@ public class SubversionReleaseSCM extends SCM implements Serializable {
     }
 
     public static class DescriptorImpl extends SCMDescriptor<SubversionReleaseSCM> {
+        @Extension
         public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
         /**
