@@ -9,6 +9,7 @@ import hudson.model.ParametersAction;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Run;
 import hudson.model.StringParameterValue;
+import hudson.model.TaskListener;
 import hudson.plugins.svn_release_mgr.model.Revision;
 import hudson.scm.SubversionReleaseSCM;
 import hudson.scm.SubversionReleaseSCM.ModuleLocation;
@@ -106,11 +107,13 @@ public class ProjectReleaseAction implements ProminentProjectAction {
 		}
 
 		for (Run r : owner.getBuilds().toArray(new Run[0])) {
-			Map<String, String> env = r.getEnvVars();
-			LOGGER.fine("---------ENV VARS FOR RUN:" + r.number);
-			for (String key : env.keySet()) {
-				LOGGER.fine(key + " = " + env.get(key));
-			}
+			try {
+				Map<String, String> env = r.getEnvironment(TaskListener.NULL);
+				LOGGER.fine("---------ENV VARS FOR RUN:" + r.number);
+				for (String key : env.keySet()) {
+					LOGGER.fine(key + " = " + env.get(key));
+				}
+			} catch (Exception ex) { }
 			Long rev = Revision.getRevisionNumber(r);
 			if (rev == null) continue;
 			Revision revision = revisions.get(rev);
@@ -170,7 +173,7 @@ public class ProjectReleaseAction implements ProminentProjectAction {
 		req.bindParameters(this);
         List<ParameterValue> values = new ArrayList<ParameterValue>();
         values.add(new StringParameterValue("REVISION", revision));
-    	Hudson.getInstance().getQueue().add(
+    	Hudson.getInstance().getQueue().schedule(
     			owner, 0, new ParametersAction(values), new CauseAction(new Cause.UserCause()));
         rsp.forwardToPreviousPage(req);
 	}

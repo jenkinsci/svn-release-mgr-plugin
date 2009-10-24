@@ -1,9 +1,9 @@
 package hudson.plugins.svn_release_mgr.model;
 
-
 import hudson.model.BuildBadgeAction;
 import hudson.model.Hudson;
 import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.scm.SubversionTagAction;
 
 import java.util.HashMap;
@@ -45,8 +45,7 @@ public class Revision {
 	}
 	
 	public static Long getBuildNumber(Run r) {
-		return Long.parseLong((String)r.getEnvVars().get(BUILD_NUMBER_KEY));
-		
+		return new Long(r.getNumber());
 	}
 	
 	public static String getBuildUrl(Run r) {
@@ -55,8 +54,10 @@ public class Revision {
 	
 	public static Long getRevisionNumber(Run r) {
 		Long rev = null;
-		String revString = (String)r.getEnvVars().get(SVN_REVISION_KEY);
-		if (revString != null) rev = Long.parseLong(revString);
+		try {
+			String revString = (String)r.getEnvironment(TaskListener.NULL).get(SVN_REVISION_KEY);
+			if (revString != null) rev = Long.parseLong(revString);
+		} catch (Exception ex) { }
 		return rev; 
 	}
 	

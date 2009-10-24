@@ -92,7 +92,7 @@
 				<img width="16" height="16" src="${imagesURL}/16x16/${b.buildStatusUrl}" alt="${b.iconColor.description}" />
 			</td>
 			<td>
-				#${b.getEnvVars().get("BUILD_NUMBER")}
+				#${b.number}
       		</td>
       		<td colspan="4">
       			<a href="${r.getBuildUrl(b)}">${b.getTimestamp().getTime()}</a>
