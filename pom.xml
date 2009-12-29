@@ -4,7 +4,7 @@
 	<groupId>org.jvnet.hudson.plugins</groupId>
 	<artifactId>svn-release-mgr</artifactId>
 	<packaging>hpi</packaging>
-	<version>0.2</version>
+	<version>0.3-SNAPSHOT</version>
 	<name>Subversion Release Manager plugin</name>
 	<description>
 		Plugin lists revisions and related builds allowing a build of a
@@ -43,10 +43,4 @@
 	    <version>1.3.0-hudson-2</version>
 	  </dependency -->
 	</dependencies>
-
-  <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/svn-release-mgr-0.2</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/svn-release-mgr-0.2</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/tags/svn-release-mgr-0.2</url>
-  </scm>
 </project>
