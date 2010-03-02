@@ -1,25 +1,9 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <!--
-    This jelly script is used for per-project configuration.
-
-    See global.jelly for a general discussion about jelly script.
-  -->
-    <!--
-      optional @help points to the help document HTML. ${rootURL}/plugin/svn-release-mgr
-      is mapped to our resources/ directory, so this is a convenient way to serve
-      static resources.
-	<f:optionalBlock name="dynamic" title="Use existing dynamic view">
-	  <f:entry title="View drive">
-	    <f:textbox name="drive" value="${it.drive}"/>
-	  </f:entry>
-	</f:optionalBlock>
--->
-
-           <f:optionalBlock name="releases.show"
-            help="${rootURL}/plugin/svn-release-mgr/help-globalConfig.html"
-            title="Use Subversion Release Manager" checked="${instance != null}">
-			  <f:entry title="Max Revisions to show">
-			    <f:textbox field="maxRevisions" name="maxRevisions" value="${it.maxRevisions}"/>
-			  </f:entry>
-          </f:optionalBlock>
+  <f:optionalBlock name="releases.show"
+        help="plugin/svn-release-mgr/help-projectConfig.html"
+        title="${%Use Subversion Release Manager}" checked="${instance != null}">
+    <f:entry title="${%Max Revisions to show}">
+      <f:textbox field="maxRevisions" name="maxRevisions" clazz="required positive-number"/>
+    </f:entry>
+  </f:optionalBlock>
 </j:jelly>

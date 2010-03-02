@@ -2,7 +2,8 @@
   <l:layout title="Compare Revisions : ${it.owner.displayName}">
     <st:include page="sidepanel.jelly" it="${it.owner}" />
     <l:main-panel>
-      <h1>Compare Revisions ${it.compare[0]} and ${it.compare[1]}</h1>
+      <j:set var="compare" value="${request.getParameterValues('compare')}"/>
+      <h1>Compare Revisions ${compare[0]} and ${compare[1]}</h1>
 	  <f:form method="POST" action="compare">
 	  
       <table class="pane">
@@ -16,7 +17,7 @@
       </tr>
       </thead>
       <tbody>
-      <j:forEach var="r" items="${it.compareRevisions}">
+      <j:forEach var="r" items="${it.getRevisions(compare[0],compare[1])}">
 		<tr>
 			<td class="pane">${r.logEntry.revision}</td>
 			<td class="pane">

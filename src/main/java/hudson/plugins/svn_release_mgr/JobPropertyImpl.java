@@ -1,30 +1,21 @@
 package hudson.plugins.svn_release_mgr;
 
 import hudson.Extension;
-import hudson.Util;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import hudson.scm.SubversionReleaseSCM;
-import hudson.util.FormValidation;
 
 import java.util.logging.Logger;
 
 import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
- * Promotion processes defined for a project.
- *
- * <p>
- * TODO: a possible performance problem as every time the owner job is reconfigured,
- * all the promotion processes get reloaded from the disk.
- *
- * @author Kohsuke Kawaguchi
+ * Job property for svn-release-mgr.
  */
 public final class JobPropertyImpl extends JobProperty<AbstractProject<?,?>> {
 
@@ -51,12 +42,7 @@ public final class JobPropertyImpl extends JobProperty<AbstractProject<?,?>> {
 
 
     /**
-     * Descriptor for {@link HelloWorldBuilder}. Used as a singleton.
-     * The class is marked as public so that it can be accessed from views.
-     *
-     * <p>
-     * See <tt>views/hudson/plugins/hello_world/HelloWorldBuilder/*.jelly</tt>
-     * for the actual HTML fragment for the configuration screen.
+     * Descriptor for Subversion Release Manager job property.
      */
     @Extension
     public static final class DescriptorImpl extends JobPropertyDescriptor {
@@ -68,7 +54,6 @@ public final class JobPropertyImpl extends JobProperty<AbstractProject<?,?>> {
 
 		@Override
 		public String getDisplayName() {
-			// TODO Auto-generated method stub
 			return "Subversion Releases";
 		}
 
@@ -78,15 +63,6 @@ public final class JobPropertyImpl extends JobProperty<AbstractProject<?,?>> {
 				return new JobPropertyImpl(req.getParameter("maxRevisions"));
 			else
 				return null;
-		}
-
-		public FormValidation doCheckMaxRevisions(@QueryParameter String value) {
-			try {
-				Integer.parseInt(Util.nullify(value));
-				return FormValidation.ok();
-			} catch (NumberFormatException e) {
-				return FormValidation.error("Enter an integer value only.");
-			}
 		}
 
     }

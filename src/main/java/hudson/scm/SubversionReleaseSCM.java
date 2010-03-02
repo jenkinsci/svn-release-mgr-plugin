@@ -1036,7 +1036,7 @@ public class SubversionReleaseSCM extends SCM implements Serializable {
             @Override
             SVNAuthentication createSVNAuthentication(String kind) {
                 if(kind.equals(ISVNAuthenticationManager.SSL))
-                    return new SVNSSLAuthentication(null,Scrambler.descramble(password),false);
+                    return new SVNSSLAuthentication((byte[])null,Scrambler.descramble(password),false);
                 else
                     return null; // unexpected authentication type
             }

@@ -2,9 +2,6 @@ package hudson.plugins.svn_release_mgr;
 
 import hudson.model.AbstractProject;
 import hudson.model.Cause;
-import hudson.model.CauseAction;
-import hudson.model.Hudson;
-import hudson.model.ParameterValue;
 import hudson.model.ParametersAction;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Run;
@@ -19,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -41,8 +37,6 @@ public class ProjectReleaseAction implements ProminentProjectAction {
 
 	private AbstractProject<?, ?> owner;
 	private JobPropertyImpl property;
-	private String[] compare;
-	private String revision;
 
 	private static final Logger LOGGER = Logger.getLogger(ProjectReleaseAction.class.getName());
 
@@ -72,8 +66,8 @@ public class ProjectReleaseAction implements ProminentProjectAction {
 		return revisions;
 	}
 	
-	public Collection<Revision> getCompareRevisions() {
-		return getRevisions(Long.parseLong(compare[0]), Long.parseLong(compare[1]));
+	public Collection<Revision> getRevisions(String start, String end) {
+		return getRevisions(Long.parseLong(start), Long.parseLong(end));
 	}
 
 	public Collection<Revision> getRevisions(long start, long end) {
@@ -160,38 +154,12 @@ public class ProjectReleaseAction implements ProminentProjectAction {
 	}
 
 	public SVNClientManager createSvnClientManager() {
-		return getSubversion().createSvnClientManager(getAuthProvider());
+		return SubversionReleaseSCM.createSvnClientManager(getAuthProvider());
 	}
 
-	public void doCompare(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException {
-		//TODO Validator needed for two values
-		setCompare(req.getParameterValues("compare"));
-		req.getView(this, "compare").forward(req, rsp);
-	}
-	
-	public void doBuild(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException {
-		req.bindParameters(this);
-        List<ParameterValue> values = new ArrayList<ParameterValue>();
-        values.add(new StringParameterValue("REVISION", revision));
-    	Hudson.getInstance().getQueue().schedule(
-    			owner, 0, new ParametersAction(values), new CauseAction(new Cause.UserCause()));
+    public void doBuild(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException {
+        owner.scheduleBuild(0, new Cause.UserCause(),
+                new ParametersAction(new StringParameterValue("REVISION", req.getParameter("revision"))));
         rsp.forwardToPreviousPage(req);
-	}
-
-	public String[] getCompare() {
-		return compare;
-	}
-
-	public void setCompare(String[] compare) {
-		this.compare = compare;
-	}
-
-	public String getRevision() {
-		return revision;
-	}
-
-	public void setRevision(String revision) {
-		this.revision = revision;
-	}
-
+    }
 }
