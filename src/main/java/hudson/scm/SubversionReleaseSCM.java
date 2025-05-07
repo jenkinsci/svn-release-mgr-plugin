@@ -24,7 +24,6 @@ import hudson.scm.subversion.Messages;
 import hudson.triggers.SCMTrigger;
 import hudson.util.EditDistance;
 import hudson.util.FormFieldValidator;
-import hudson.util.IOException2;
 import hudson.util.MultipartFormDataParser;
 import hudson.util.Scrambler;
 import hudson.util.StreamCopyThread;
@@ -109,7 +108,7 @@ import net.sf.json.JSONObject;
  * so that it can use the credentials (username, password, etc.) that the user entered for Hudson.
  * See the javadoc of this method for the precautions you need to take if you run Subversion operations
  * remotely on slaves.
- * 
+ *
  * <h2>Implementation Notes</h2>
  * <p>
  * Because this instance refers to some other classes that are not necessarily
@@ -184,9 +183,9 @@ public class SubversionReleaseSCM extends SCM implements Serializable {
     public ModuleLocation[] getLocations() {
     	return getLocations(null);
     }
-    
+
     /**
-     * list of all configured svn locations, expanded according to 
+     * list of all configured svn locations, expanded according to
      * build parameters values;
      *
      * @param build
@@ -214,7 +213,7 @@ public class SubversionReleaseSCM extends SCM implements Serializable {
 
         if(build == null)
         	return locations;
-        
+
         ModuleLocation[] outLocations = new ModuleLocation[locations.length];
         for (int i = 0; i < outLocations.length; i++) {
 			outLocations[i] = locations[i].getExpandedLocation(build);
@@ -238,7 +237,7 @@ public class SubversionReleaseSCM extends SCM implements Serializable {
     @Override
     public void buildEnvVars(AbstractBuild build, Map<String, String> env) {
         super.buildEnvVars(build, env);
-        
+
         ModuleLocation[] locations = getLocations(build);
 
         try {
@@ -351,7 +350,7 @@ public class SubversionReleaseSCM extends SCM implements Serializable {
     public boolean requiresWorkspaceForPolling() {
         return false;
     }
-    
+
     public boolean checkout(AbstractBuild build, Launcher launcher, FilePath workspace, final BuildListener listener, File changelogFile) throws IOException, InterruptedException {
         List<External> externals = checkout(build,workspace,listener);
 
@@ -389,12 +388,12 @@ public class SubversionReleaseSCM extends SCM implements Serializable {
      */
     private List<External> checkout(AbstractBuild build, FilePath workspace, TaskListener listener) throws IOException, InterruptedException {
         try {
-        	
+
             if (!repositoryLocationsExist(build, listener) && build.getProject().getLastSuccessfulBuild()!=null) {
                 // Disable this project, see issue #763
                 // but only do so if there was at least some successful build,
                 // to make sure that initial configuration error won't disable the build. see issue #1567
-            	
+
                 listener.getLogger().println("One or more repository locations do not exist anymore for " + build.getProject().getName() + ", project will be disabled.");
                 build.getProject().makeDisabled(true);
                 return null;
@@ -496,12 +495,12 @@ public class SubversionReleaseSCM extends SCM implements Serializable {
                             return null;
                         }
                     }
-                    
+
                     pos.close();
                     try {
 						sct.join(); // wait for all data to be piped.
 					} catch (InterruptedException e) {
-                        throw new IOException2("interrupted",e);
+                        throw new IOException("interrupted",e);
                     }
                 }
 
@@ -548,7 +547,7 @@ public class SubversionReleaseSCM extends SCM implements Serializable {
      * <p>
      * CAUTION: this code only works when invoked on master. On slaves, use
      * {@link #createSvnClientManager(ISVNAuthenticationProvider)} and get {@link ISVNAuthenticationProvider}
-     * from the master via remoting. 
+     * from the master via remoting.
      */
     public static SVNClientManager createSvnClientManager() {
         return createSvnClientManager(DescriptorImpl.DESCRIPTOR.createAuthenticationProvider());
@@ -613,7 +612,7 @@ public class SubversionReleaseSCM extends SCM implements Serializable {
      */
     static final class External implements Serializable {
         /**
-         * Relative path within the workspace where this <tt>svn:exteranls</tt> exist. 
+         * Relative path within the workspace where this <tt>svn:exteranls</tt> exist.
          */
         final String path;
 
@@ -1151,7 +1150,7 @@ public class SubversionReleaseSCM extends SCM implements Serializable {
          *
          * This code is fairly ugly because of the way SVNKit handles credentials.
          */
-        // TODO: stapler should do multipart/form-data handling 
+        // TODO: stapler should do multipart/form-data handling
         public void doPostCredential(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
             Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
 
@@ -1178,7 +1177,7 @@ public class SubversionReleaseSCM extends SCM implements Serializable {
                     try {
                         item.write(keyFile);
                     } catch (Exception e) {
-                        throw new IOException2(e);
+                        throw new IOException(e);
                     }
                     if(PuTTYKey.isPuTTYKeyFile(keyFile)) {
                         // TODO: we need a passphrase support
@@ -1595,7 +1594,7 @@ public class SubversionReleaseSCM extends SCM implements Serializable {
         public ModuleLocation getExpandedLocation(AbstractBuild<?, ?> build) {
             return new ModuleLocation(getExpandedRemote(build), local);
         }
-        
+
         public String toString() {
             return remote;
         }
