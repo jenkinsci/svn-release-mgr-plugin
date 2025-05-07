@@ -4,7 +4,6 @@ import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.scm.SubversionReleaseSCM.ModuleLocation;
 import hudson.FilePath;
-import hudson.util.IOException2;
 import hudson.remoting.VirtualChannel;
 import hudson.FilePath.FileCallable;
 import org.tmatesoft.svn.core.SVNException;
@@ -97,7 +96,7 @@ public final class SubversionReleaseChangeLogBuilder {
         return SubversionReleaseSCM.DescriptorImpl.DESCRIPTOR.createAuthenticationProvider();
     }
 
-    private boolean buildModule(String url, SVNLogClient svnlc, SVNXMLLogHandler logHandler) throws IOException2 {
+    private boolean buildModule(String url, SVNLogClient svnlc, SVNXMLLogHandler logHandler) throws IOException {
         PrintStream logger = listener.getLogger();
         Long prevRev = previousRevisions.get(url);
         if(prevRev==null) {
@@ -130,7 +129,7 @@ public final class SubversionReleaseChangeLogBuilder {
             if(debug)
                 listener.getLogger().println("done");
         } catch (SVNException e) {
-            throw new IOException2("revision check failed on "+url,e);
+            throw new IOException("revision check failed on "+url,e);
         }
         return true;
     }

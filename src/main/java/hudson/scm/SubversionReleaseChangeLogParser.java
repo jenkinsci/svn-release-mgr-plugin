@@ -4,7 +4,6 @@ import hudson.model.AbstractBuild;
 import hudson.scm.SubversionReleaseChangeLogSet.LogEntry;
 import hudson.scm.SubversionReleaseChangeLogSet.Path;
 import hudson.util.Digester2;
-import hudson.util.IOException2;
 import org.apache.commons.digester.Digester;
 import org.xml.sax.SAXException;
 
@@ -42,9 +41,9 @@ public class SubversionReleaseChangeLogParser extends ChangeLogParser {
         try {
             digester.parse(changelogFile);
         } catch (IOException e) {
-            throw new IOException2("Failed to parse "+changelogFile,e);
+            throw new IOException("Failed to parse "+changelogFile,e);
         } catch (SAXException e) {
-            throw new IOException2("Failed to parse "+changelogFile,e);
+            throw new IOException("Failed to parse "+changelogFile,e);
         }
 
         return new SubversionReleaseChangeLogSet(build,r);
